@@ -1,21 +1,189 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Page Title</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+﻿<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="/JS/plotly.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>    
+    </head>
+    <body>
+        <p id="rt"></p>
+        <p id="st"></p>
+    <div class="navbar"><span></span></div>
+    <div class="wrapper">
+        <div id="chart"></div>
+        <script>
+                var config = {
+                    apiKey: "AIzaSyCcz-IVNrPlKBCIfkjCy-R4IgmMQut8qoQ",
+                    authDomain: "temperature-and-humidity-e8dfd.firebaseapp.com",
+                    databaseURL: "https://temperature-and-humidity-e8dfd.firebaseio.com",
+                    projectId: "temperature-and-humidity-e8dfd",
+                    storageBucket: "temperature-and-humidity-e8dfd.appspot.com",
+                             };
+                firebase.initializeApp(config);
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
-<script src="/JS/site.js"></script>
-<link rel="stylesheet" href="/CSS/site.css" />
-
-</head>
-<body>
-    <h1 id="name">V.Sai Abhimanya</h1>
-
-    <p id="college">17071A12H6</p>
+            var database = firebase.database().ref().child('sensor/dht');
+            function getData(i) {
+                database.on('value',snapshot => {
+                var deb = snapshot.val();
+                var keys = Object.keys(deb)
+                
+                    var k = keys[i];
+                    var humidity = deb[k].humidity;
+                    var temperature = deb[k].temp;
+                    var datetime = deb[k].Datetime;
+                    document.getElementById("rt").value = humidity;
+                    document.getElementById("st").value = temperature;
+                });
+                var some = document.getElementById("rt").value;
+                
+                 return some;
+            }  
+            s = 0;
+            Plotly.plot('chart',[{
+                y:[getData(s)],
+                type:'line'
+            }]);
+            
+            var cnt = 0;
+            setInterval(function(){
+                Plotly.extendTraces('chart',{ y:[[getData(cnt)]]}, [0]);
+                cnt++;
+                var some3 = document.getElementById("rt").value;
+                Plotly.relayout('chart',{
+                        xaxis: {
+                            title: {
+                                   text: 'TIME (s)',
+                                   font: {
+                                    family: 'Courier New, monospace',
+                                    size: 18,
+                                color: '#7f7f7f'
+      }
+    }
+                        },
+                        yaxis: {
+                            title: {
+                                   text: 'HUMIDITY (%)',
+                                   font: {
+                                    family: 'Courier New, monospace',
+                                    size: 18,
+                                color: '#7f7f7f'
+      }
+    },
+    range:[some3-2,some3+2]
+                        }
+                    });
+                if(cnt > 8) {
+                    var some3 = document.getElementById("rt").value;
+                    Plotly.relayout('chart',{
+                        xaxis: {
+                            title: {
+                                   text: 'TIME (s)',
+                                   font: {
+                                    family: 'Courier New, monospace',
+                                    size: 18,
+                                color: '#7f7f7f'
+      }
+    },
+                            range: [cnt-8,cnt]
+                        },
+                        yaxis: {
+                            title: {
+                                   text: 'HUMIDITY (°C)',
+                                   font: {
+                                    family: 'Courier New, monospace',
+                                    size: 18,
+                                color: '#7f7f7f'
+      }
+    },
     
-    <p id="regno">VNRVJIET</p>
-</body>
+
+    range : [some3-2,some3+2]
+                        }
+                    });
+                }
+            },7000);
+        </script>
+    </div>
+
+    <div class="wrapper2">
+        <div id="chart2"></div>
+        <script>
+            function getData2(i2) {
+                database.on('value',snapshot => {
+                var deb2 = snapshot.val();
+                var keys2 = Object.keys(deb2)
+                
+                    var k2 = keys2[i];
+                    var humidity1 = deb2[k].humidity;
+                    var temperature1 = deb2[k].temp;
+                    var datetime1 = deb2[k].Datetime;
+                    document.getElementById("st").value = temperature;
+                });
+                var lome = document.getElementById("st").value;
+                
+                 return lome;
+            }
+            s2 = 0;
+            Plotly.plot('chart2',[{
+                y:[getData2(s2)],
+                type:'line',
+                xref:"paper",
+                name :"Temperature"
+            }]);
+            
+            var cnt2 = 0;
+            setInterval(function(){
+                Plotly.extendTraces('chart2',{ y:[[getData2(cnt2)]]}, [0]);
+                cnt2++;
+                Plotly.relayout('chart2',{
+                        xaxis: {
+                            title: {
+                                   text: 'TIME (s)',
+                                   font: {
+                                    family: 'Courier New, monospace',
+                                    size: 18,
+                                color: '#7f7f7f'
+      }
+    }
+                        },
+                        yaxis: {
+                            title: {
+                                   text: 'TEMPERATURE (°C)',
+                                   font: {
+                                    family: 'Courier New, monospace',
+                                    size: 18,
+                                color: '#7f7f7f'
+      }
+    }
+                        }
+                    });
+                if(cnt2> 8) {
+                    Plotly.relayout('chart2',{
+                        xaxis: {
+                            title: {
+                                   text: 'TIME (s)',
+                                   font: {
+                                    family: 'Courier New, monospace',
+                                    size: 18,
+                                color: '#7f7f7f'
+      }
+    },
+                            range: [cnt2-8,cnt2]
+                        },
+                        yaxis: {
+                            title: {
+                                   text: 'TEMPERATURE (°C)',
+                                   font: {
+                                    family: 'Courier New, monospace',
+                                    size: 18,
+                                color: '#7f7f7f'
+      }
+    }
+                        }
+
+                    });
+                }
+            },7000);
+        </script>
+    </div>
+    </body>
 </html>
